@@ -6,8 +6,15 @@
 .churchs {
   padding: 35px;
   position: absolute;
-  top: 0;
-  right: 10%;
+  top: 15px;
+  left: 10px;
   border: 1px solid black;
   border-radius: 5px;
+  background-color: white;
+  z-index: 1;
+}
+input {
+  position: absolute;
+  top: 15px;
+  right: 10px;
 }

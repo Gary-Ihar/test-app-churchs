@@ -77,13 +77,12 @@ export default class MainMap extends Component {
       });
   };
   render() {
-    console.log(this.state.mapCenterCoor);
     return (
       <>
         <YMaps>
           <div>
             <Map
-              style={{ width: "50vw", height: "70vh" }}
+              style={{ width: "100vw", height: "100vh" }}
               state={{
                 center: [
                   this.state.mapCenterCoor[1],
