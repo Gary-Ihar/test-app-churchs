@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { YMaps, Map, Placemark } from "react-yandex-maps";
+import { YMaps, Map, Placemark, Clusterer } from "react-yandex-maps";
 import axios from "axios";
 
 //const KEY = "dc8c4f86-ef35-4cbd-ae74-1f6044cdc950";
@@ -30,6 +30,7 @@ export default class MainMap extends Component {
         this.setState({ churchs });
       });
   }
+
   onClick = (item) => {
     const selectedChurchs = {
       city: item.city,
@@ -37,7 +38,10 @@ export default class MainMap extends Component {
       phone: item.phone,
       webSite: item.webSite,
     };
-    this.setState({ selectedChurchs });
+    this.setState({
+      selectedChurchs,
+      mapCenterCoor: [item.coordinates[1], item.coordinates[0]],
+    });
   };
   searchCity = (e) => {
     const { name, value } = e.target;
@@ -91,15 +95,22 @@ export default class MainMap extends Component {
                 zoom: 13,
               }}
             >
-              {this.state.churchs.length > 0 &&
-                this.state.churchs.map((item, i) => (
-                  <Placemark
-                    key={i}
-                    geometry={item.coordinates}
-                    onClick={() => this.onClick(item)}
-                    options={{ preset: "islands#blueDotIcon" }}
-                  />
-                ))}
+              <Clusterer
+                options={{
+                  preset: "islands#invertedVioletClusterIcons",
+                  groupByCoordinates: false,
+                }}
+              >
+                {this.state.churchs.length > 0 &&
+                  this.state.churchs.map((item, i) => (
+                    <Placemark
+                      key={i}
+                      geometry={item.coordinates}
+                      onClick={() => this.onClick(item)}
+                      options={{ preset: "islands#blueDotIcon" }}
+                    />
+                  ))}
+              </Clusterer>
             </Map>
           </div>
         </YMaps>
