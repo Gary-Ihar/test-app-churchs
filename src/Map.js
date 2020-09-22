@@ -28,6 +28,7 @@ export default class MainMap extends Component {
             coordinates: [item.latitude, item.longitude],
           };
         });
+
         this.setState({ churchs });
       });
   }
@@ -66,7 +67,13 @@ export default class MainMap extends Component {
             res.data.result.address[0].features[0].geometry.geometries[0] //features[0] - массив с городом, если он не один(тестировал на Boston), то длина массива увеличивается. Это момент тут не продуман.
               .coordinates)
       )
-      .catch((error) => (mapCenterCoor = [-73.935242, 40.73061]));
+      .catch((error) => {
+        alert("Такого города нет");
+        mapCenterCoor = [
+          this.state.mapCenterCoor[0],
+          this.state.mapCenterCoor[1],
+        ];
+      });
     axios
       .get(
         `https://apiv4.updateparishdata.org/Churchs/?lat=${mapCenterCoor[1]}&long=${mapCenterCoor[0]}&pg=1`
@@ -75,6 +82,7 @@ export default class MainMap extends Component {
         let churchs;
         churchs = res.data.map((item) => {
           return {
+            target: false,
             city: item.church_address_providence_name,
             name: item.name,
             adress: item.church_address_street_address,
@@ -83,6 +91,7 @@ export default class MainMap extends Component {
             coordinates: [item.latitude, item.longitude],
           };
         });
+
         this.setState({ churchs, mapCenterCoor });
       });
   };
@@ -101,32 +110,25 @@ export default class MainMap extends Component {
                 zoom: 13,
               }}
             >
-              <Clusterer
-                options={{
-                  preset: "islands#invertedVioletClusterIcons",
-                  groupByCoordinates: false,
-                }}
-              >
-                {this.state.churchs.length > 0 &&
-                  this.state.churchs.map((item, i) => {
-                    let color;
-                    if (item.target === false) {
-                      color = "islands#blueDotIcon";
-                    } else {
-                      color = "islands#redDotIcon";
-                    }
-                    return (
-                      <Placemark
-                        key={i}
-                        geometry={item.coordinates}
-                        onClick={() => this.onClick(item)}
-                        options={{
-                          preset: color,
-                        }}
-                      />
-                    );
-                  })}
-              </Clusterer>
+              {this.state.churchs.length > 0 &&
+                this.state.churchs.map((item, i) => {
+                  let color;
+                  if (item.target === false) {
+                    color = "islands#blueDotIcon";
+                  } else {
+                    color = "islands#redDotIcon";
+                  }
+                  return (
+                    <Placemark
+                      key={i}
+                      geometry={item.coordinates}
+                      onClick={() => this.onClick(item)}
+                      options={{
+                        preset: color,
+                      }}
+                    />
+                  );
+                })}
             </Map>
           </div>
         </YMaps>
