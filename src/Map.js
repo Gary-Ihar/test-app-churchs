@@ -19,6 +19,7 @@ export default class MainMap extends Component {
       .then((res) => {
         churchs = res.data.map((item) => {
           return {
+            target: false,
             city: item.church_address_providence_name,
             name: item.name,
             adress: item.church_address_street_address,
@@ -32,6 +33,10 @@ export default class MainMap extends Component {
   }
 
   onClick = (item) => {
+    let churchs = [...this.state.churchs].map((ch) => {
+      ch.target = ch.phone === item.phone;
+      return ch;
+    });
     const selectedChurchs = {
       city: item.city,
       adress: item.adress,
@@ -41,6 +46,7 @@ export default class MainMap extends Component {
     this.setState({
       selectedChurchs,
       mapCenterCoor: [item.coordinates[1], item.coordinates[0]],
+      churchs,
     });
   };
   searchCity = (e) => {
@@ -102,14 +108,24 @@ export default class MainMap extends Component {
                 }}
               >
                 {this.state.churchs.length > 0 &&
-                  this.state.churchs.map((item, i) => (
-                    <Placemark
-                      key={i}
-                      geometry={item.coordinates}
-                      onClick={() => this.onClick(item)}
-                      options={{ preset: "islands#blueDotIcon" }}
-                    />
-                  ))}
+                  this.state.churchs.map((item, i) => {
+                    let color;
+                    if (item.target === false) {
+                      color = "islands#blueDotIcon";
+                    } else {
+                      color = "islands#redDotIcon";
+                    }
+                    return (
+                      <Placemark
+                        key={i}
+                        geometry={item.coordinates}
+                        onClick={() => this.onClick(item)}
+                        options={{
+                          preset: color,
+                        }}
+                      />
+                    );
+                  })}
               </Clusterer>
             </Map>
           </div>
@@ -118,8 +134,18 @@ export default class MainMap extends Component {
           <div className="churchs">
             <p>City: {this.state.selectedChurchs.city}</p>
             <p>Adress: {this.state.selectedChurchs.adress}</p>
-            <p>Phone: {this.state.selectedChurchs.phone}</p>
-            <p>Web-site: {this.state.selectedChurchs.webSite}</p>
+            <p>
+              Phone:{" "}
+              <a href={`tel:${this.state.selectedChurchs.phone}`}>
+                {this.state.selectedChurchs.phone}
+              </a>
+            </p>
+            <p>
+              Web-site:{" "}
+              <a href={this.state.selectedChurchs.webSite}>
+                {this.state.selectedChurchs.webSite}
+              </a>
+            </p>
           </div>
         )}
         <form onSubmit={this.onSubmit}>
