@@ -2,6 +2,8 @@ import React from "react";
 import { Placemark, Clusterer } from "react-yandex-maps";
 
 const test = (props) => {
+  console.log(props.churchs);
+
   return (
     <Clusterer
       options={{
@@ -9,13 +11,24 @@ const test = (props) => {
         groupByCoordinates: false,
       }}
     >
-      {props.churchs.map((church, i) => (
-        <Placemark
-          key={i}
-          onClick={() => props.selectChurch(church)}
-          geometry={church.coordinates}
-        />
-      ))}
+      {props.churchs.map((church, i) => {
+        let color;
+        if (!church.target) {
+          color = "islands#blueDotIcon";
+        } else {
+          color = "islands#redDotIcon";
+        }
+        return (
+          <Placemark
+            key={i}
+            onClick={() => props.selectChurch(church)}
+            geometry={church.coordinates}
+            options={{
+              preset: color,
+            }}
+          />
+        );
+      })}
     </Clusterer>
   );
 };
