@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { YMaps, Map, Placemark, Clusterer } from "react-yandex-maps";
+import { YMaps, Map, Placemark } from "react-yandex-maps";
 import axios from "axios";
+import Test from "./test";
 
 //const KEY = "dc8c4f86-ef35-4cbd-ae74-1f6044cdc950";
 export default class MainMap extends Component {
@@ -9,6 +10,7 @@ export default class MainMap extends Component {
     selectedChurchs: false,
     searchCity: "",
     mapCenterCoor: [-73.935242, 40.73061],
+    testFlag: true,
   };
   componentDidMount() {
     let churchs = [];
@@ -67,6 +69,11 @@ export default class MainMap extends Component {
             res.data.result.address[0].features[0].geometry.geometries[0] //features[0] - массив с городом, если он не один(тестировал на Boston), то длина массива увеличивается. Это момент тут не продуман.
               .coordinates)
       )
+      .then((res) => {
+        console.log("false");
+        this.setState({ testFlag: false });
+      })
+
       .catch((error) => {
         alert("Такого города нет");
         mapCenterCoor = [
@@ -92,7 +99,7 @@ export default class MainMap extends Component {
           };
         });
 
-        this.setState({ churchs, mapCenterCoor });
+        this.setState({ churchs, mapCenterCoor, testFlag: true });
       });
   };
   render() {
@@ -110,25 +117,12 @@ export default class MainMap extends Component {
                 zoom: 13,
               }}
             >
-              {this.state.churchs.length > 0 &&
-                this.state.churchs.map((item, i) => {
-                  let color;
-                  if (item.target === false) {
-                    color = "islands#blueDotIcon";
-                  } else {
-                    color = "islands#redDotIcon";
-                  }
-                  return (
-                    <Placemark
-                      key={i}
-                      geometry={item.coordinates}
-                      onClick={() => this.onClick(item)}
-                      options={{
-                        preset: color,
-                      }}
-                    />
-                  );
-                })}
+              {this.state.testFlag && (
+                <Test
+                  churchs={this.state.churchs}
+                  selectChurch={this.onClick}
+                />
+              )}
             </Map>
           </div>
         </YMaps>
