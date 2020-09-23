@@ -2,7 +2,6 @@ import React from "react";
 import { Placemark, Clusterer } from "react-yandex-maps";
 
 const test = (props) => {
-  console.log(props);
   return (
     <Clusterer
       options={{
@@ -10,11 +9,11 @@ const test = (props) => {
         groupByCoordinates: false,
       }}
     >
-      {props.churchs.map((item, i) => (
+      {props.churchs.map((church, i) => (
         <Placemark
           key={i}
-          onClick={() => props.selectChurch(item)}
-          geometry={item.coordinates}
+          onClick={() => props.selectChurch(church)}
+          geometry={church.coordinates}
         />
       ))}
     </Clusterer>

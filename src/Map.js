@@ -1,16 +1,15 @@
 import React, { Component } from "react";
-import { YMaps, Map, Placemark } from "react-yandex-maps";
+import { YMaps, Map } from "react-yandex-maps";
 import axios from "axios";
-import Test from "./test";
+import ClusterPlaceMark from "./ClusterPlaceMark";
 
-//const KEY = "dc8c4f86-ef35-4cbd-ae74-1f6044cdc950";
 export default class MainMap extends Component {
   state = {
     churchs: [],
     selectedChurchs: false,
     searchCity: "",
     mapCenterCoor: [-73.935242, 40.73061],
-    testFlag: true,
+    flagForClusterRender: true,
   };
   componentDidMount() {
     let churchs = [];
@@ -70,8 +69,7 @@ export default class MainMap extends Component {
               .coordinates)
       )
       .then((res) => {
-        console.log("false");
-        this.setState({ testFlag: false });
+        this.setState({ flagForClusterRender: false }); //из-за кластеризации необходимо полностью перерисовать компонент
       })
 
       .catch((error) => {
@@ -99,7 +97,7 @@ export default class MainMap extends Component {
           };
         });
 
-        this.setState({ churchs, mapCenterCoor, testFlag: true });
+        this.setState({ churchs, mapCenterCoor, flagForClusterRender: true });
       });
   };
   render() {
@@ -117,8 +115,8 @@ export default class MainMap extends Component {
                 zoom: 13,
               }}
             >
-              {this.state.testFlag && (
-                <Test
+              {this.state.flagForClusterRender && (
+                <ClusterPlaceMark
                   churchs={this.state.churchs}
                   selectChurch={this.onClick}
                 />
