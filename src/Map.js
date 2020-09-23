@@ -36,7 +36,11 @@ export default class MainMap extends Component {
 
   onClick = (item) => {
     let churchs = [...this.state.churchs].map((ch) => {
-      ch.target = ch.phone === item.phone;
+      ch.target =
+        ch.phone === item.phone &&
+        ch.name === item.name &&
+        ch.adress &&
+        item.adress;
       return ch;
     });
     const selectedChurchs = {

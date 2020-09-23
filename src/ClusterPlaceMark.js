@@ -2,8 +2,6 @@ import React from "react";
 import { Placemark, Clusterer } from "react-yandex-maps";
 
 const test = (props) => {
-  console.log(props.churchs);
-
   return (
     <Clusterer
       options={{
