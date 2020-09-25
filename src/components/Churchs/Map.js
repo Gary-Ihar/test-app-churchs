@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import { YMaps, Map } from "react-yandex-maps";
 import axios from "axios";
 import ClusterPlaceMark from "./ClusterPlaceMark";
+import ChurchInfo from "./ChurchInfo";
+import SearchForm from "./SearchForm";
 
 export default class MainMap extends Component {
   state = {
     churchs: [],
     selectedChurchs: false,
-    searchCity: "",
     mapCenterCoor: [-73.935242, 40.73061],
     flagForClusterRender: true,
   };
@@ -59,13 +60,11 @@ export default class MainMap extends Component {
     const { name, value } = e.target;
     this.setState({ [name]: value });
   };
-  onSubmit = async (e) => {
+  onSubmit = async (e, newCityName) => {
     e.preventDefault();
-    let mapCenterCoor;
+    let mapCenterCoor; // координаты центра города, который будем искать
     await axios
-      .get(
-        `http://search.maps.sputnik.ru/search/addr?q=${this.state.searchCity}`
-      )
+      .get(`http://search.maps.sputnik.ru/search/addr?q=${newCityName}`) // запрос за городом
       .then(
         (res) =>
           (mapCenterCoor =
@@ -83,13 +82,12 @@ export default class MainMap extends Component {
           this.state.mapCenterCoor[1],
         ];
       });
-    axios
+    axios // тут уже запрос за церквями
       .get(
         `https://apiv4.updateparishdata.org/Churchs/?lat=${mapCenterCoor[1]}&long=${mapCenterCoor[0]}&pg=1`
       )
       .then((res) => {
-        let churchs;
-        churchs = res.data.map((item) => {
+        let churchs = res.data.map((item) => {
           return {
             target: false,
             city: item.church_address_providence_name,
@@ -107,8 +105,9 @@ export default class MainMap extends Component {
   render() {
     return (
       <>
+        {/* Яндекс карта */}
         <YMaps>
-          <div>
+          <>
             <Map
               style={{ width: "100vw", height: "100vh" }}
               state={{
@@ -119,6 +118,7 @@ export default class MainMap extends Component {
                 zoom: 13,
               }}
             >
+              {/* Кластер необходимо чистить, поэтому перерисовываю его полностью */}
               {this.state.flagForClusterRender && (
                 <ClusterPlaceMark
                   churchs={this.state.churchs}
@@ -126,29 +126,14 @@ export default class MainMap extends Component {
                 />
               )}
             </Map>
-          </div>
+          </>
         </YMaps>
+        {/* Информация о выбранном городе */}
         {this.state.selectedChurchs && (
-          <div className="churchs">
-            <p>City: {this.state.selectedChurchs.city}</p>
-            <p>Adress: {this.state.selectedChurchs.adress}</p>
-            <p>
-              Phone:{" "}
-              <a href={`tel:${this.state.selectedChurchs.phone}`}>
-                {this.state.selectedChurchs.phone}
-              </a>
-            </p>
-            <p>
-              Web-site:{" "}
-              <a href={this.state.selectedChurchs.webSite}>
-                {this.state.selectedChurchs.webSite}
-              </a>
-            </p>
-          </div>
+          <ChurchInfo churchInfo={this.state.selectedChurchs} />
         )}
-        <form onSubmit={this.onSubmit}>
-          <input onChange={this.searchCity} name="searchCity" />
-        </form>
+        {/* Форма(инпут) поиска города */}
+        <SearchForm onSubmit={this.onSubmit} />
       </>
     );
   }

@@ -1,5 +1,5 @@
 import React from "react";
-import Map from "./Map";
+import Map from "./components/Churchs/Map";
 import "./App.css";
 
 function App() {
