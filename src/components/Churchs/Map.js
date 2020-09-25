@@ -56,10 +56,6 @@ export default class MainMap extends Component {
       churchs,
     });
   };
-  searchCity = (e) => {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
-  };
   onSubmit = async (e, newCityName) => {
     e.preventDefault();
     let mapCenterCoor; // координаты центра города, который будем искать
@@ -99,7 +95,7 @@ export default class MainMap extends Component {
           };
         });
 
-        this.setState({ churchs, mapCenterCoor, flagForClusterRender: true });
+        this.setState({ churchs, mapCenterCoor, flagForClusterRender: true }); // flagForClusterRender: true - необходимость для чистки кластера
       });
   };
   render() {
